@@ -123,6 +123,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "cache-last-timeout"
+    }
+  },
+  "defaultProject": "cache-last-timeout",
+  "cli": {
+    "analytics": false
+  }
 }

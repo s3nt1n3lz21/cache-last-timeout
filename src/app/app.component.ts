@@ -1,11 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
-export type cacheLastTimeout = Map<Function, 
-  {
-
-    timeout: 
-  }
->;
+import { ApiService } from './api.service';
 
 @Component({
   selector: 'app-root',
@@ -15,27 +9,48 @@ export type cacheLastTimeout = Map<Function,
 export class AppComponent implements OnInit {
   title = 'cache-last-timeout';
 
-  // Cache the last value, get a new value every timeout, or retrieve early if retrieveNow = true
-  // Used for caching api responses or 
-  cacheLastTimeout = (func, timeout, retrieveNow) => {
-    const results = {};
-    const last = null;
-    return (...args) => {
-      const argsKey = JSON.stringify(args);
-      if (!results[argsKey] || Date.now() - last > timeout || retrieveNow) {
-        results[argsKey] = func(...args);
-      }
-      return results[argsKey];
-    };
-  };
-
-  valueChanges() {
-
-  }
+  constructor(private apiService: ApiService) {}
 
   ngOnInit() {
-    console.time();
+    console.log('api timeout: 5000ms');
+    setTimeout(
+      () => {
+        console.log('calling api at 0000ms');
+        this.apiService.fetchWeatherInfoCached(false, 'london').subscribe(
+        (data) => {})
+      }
+      , 0);
 
-    console.timeEnd();
+      setTimeout(
+        () => {
+          console.log('calling api at 1000ms');
+          this.apiService.fetchWeatherInfoCached(false, 'london').subscribe(
+          (data) => {})
+        }
+        , 1000);
+
+        setTimeout(
+          () => {
+            console.log('calling api at 4000ms');
+            this.apiService.fetchWeatherInfoCached(false, 'london').subscribe(
+            (data) => {})
+          }
+          , 4000);
+
+          setTimeout(
+            () => {
+              console.log('calling api at 7000ms');
+              this.apiService.fetchWeatherInfoCached(false, 'london').subscribe(
+              (data) => {})
+            }
+            , 7000);
+
+            setTimeout(
+              () => {
+                console.log('calling api at 10000ms');
+                this.apiService.fetchWeatherInfoCached(false, 'london').subscribe(
+                (data) => {})
+              }
+              , 10000);
   }
 }
