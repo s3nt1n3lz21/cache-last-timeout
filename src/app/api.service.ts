@@ -19,19 +19,34 @@ export class ApiService {
 
     // Cache the last value, get a new value every timeout, or retrieve early if retrieveNow = true
     // Used for caching api responses or 
-    cacheWithTimeout = (func, args, timeout = 0, retrieveNow = true) => {
+    // cacheWithTimeout = (func, args, timeout = 0, retrieveNow = true) => {
+    //     const now = Date.now();
+    //     console.log('func url: ', func);
+    //     // Call the function again if currently no value, timeout expired or retrieving now.
+    //     if (!this.apiCache[func.url] || this.apiCache[func.url].expiresAt < now || retrieveNow) {
+    //         this.apiCache[func.url] = {
+    //             value: func(...args),
+    //             expiresAt: now + timeout
+    //         };
+    //         console.log('grabbing new value');
+    //     }
+    //     // console.log('this.apiCache ', this.apiCache);
+    //     return this.apiCache[func.url].value;
+    // };
+
+    cacheGetWithTimeout = (url, timeout = 0, retrieveNow = true) => {
         const now = Date.now();
-        // console.log('func name: ', func);
-        // Call the function again if currently no value, timeout expired or retrieving now.
-        if (!this.apiCache[func] || this.apiCache[func].expiresAt < now || retrieveNow) {
-            this.apiCache[func] = {
-                value: func(...args),
+        console.log('url: ', url);
+        // Call the api again if currently no value, timeout expired or retrieving now.
+        if (!this.apiCache[url] || this.apiCache[url].expiresAt < now || retrieveNow) {
+            this.apiCache[url] = {
+                value: this._http.get(url),
                 expiresAt: now + timeout
             };
             console.log('grabbing new value');
         }
         // console.log('this.apiCache ', this.apiCache);
-        return this.apiCache[func].value;
+        return this.apiCache[url].value;
     };
 
     // Original API function
@@ -43,9 +58,15 @@ export class ApiService {
 
     // Cached API function
     // Put the original func args at the end so we can easily find and replace the function in the editor
-    fetchWeatherInfoCached = (retrieveNow = true, ...args) => 
-        this.cacheWithTimeout(this.fetchWeatherInfo, args, 5000, retrieveNow);
+    // fetchWeatherInfoCached = (retrieveNow = true, ...args) => 
+    //     this.cacheWithTimeout(this.fetchWeatherInfo, args, 5000, retrieveNow);
+
+    fetchWeatherInfoCached = (retrieveNow = true, cityName) => 
+        this.cacheGetWithTimeout(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&APPID=${this.apikey}`, 5000, retrieveNow);
 
     // We can replace fetchWeatherInfo(x) with fetchWeatherInfoCache(true, x)
     // Then go through and set retrieveNow to false, making sure the app works as expected 
+
+    // replace      fetchWeatherInfo(
+    // with         fetchWeatherInfoCached(false, 
 }
